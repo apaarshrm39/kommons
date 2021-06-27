@@ -9,15 +9,19 @@ jobs:
     steps:
     - uses: actions/checkout@v2
       with:
+        path: kommons
+    - uses: actions/checkout@v2
+      with:
       #Using Main branch of Karina Repository
        repository: flanksource/karina
+       path: karina
     - uses: actions/setup-go@v2
       with:
        go-version: '1.16.5' # The Go version to download (if necessary) and use.
     - run: go version
     - run: |
-        module=$(cat go.mod | grep github.com/flanksource/kommons | awk '{print $2}')
-        go mod edit -replace github.com/flanksource/kommons@$module=$GITHUB_WORKSPACE
+        module=$(cat karina/go.mod | grep github.com/flanksource/kommons | awk '{print $2}')
+        go mod edit -replace github.com/flanksource/kommons@$module=$GITHUB_WORKSPACE/kommons
         cat go.mod
         go mod tidy
       name: replace Module
