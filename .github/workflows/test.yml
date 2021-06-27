@@ -3,13 +3,21 @@ name: Kommons-Gated-PR-Tests
 on: workflow_dispatch
 
 jobs:
-  build:
+  Test:
     runs-on: ubuntu-latest
-
+    env:
+      FILE_CHANGES_TO_CORE_ARTIFACTS: true
+    strategy:
+      fail-fast: false
+      matrix:
+        k8s:
+          - v1.18.6
+        suite:
+          - minimal
     steps:
     - uses: actions/checkout@v2
       with:
-        path: kommons
+       path: kommons
     - uses: actions/checkout@v2
       with:
       #Using Main branch of Karina Repository
@@ -27,4 +35,27 @@ jobs:
         go mod tidy
       name: replace Module
     - name: Test Make Linux
-      run: cd karina && make linux
+      working-directory: ./karina
+      run: make linux
+  
+    - name: Run e2e testing script
+      id: e2e
+      working-directory: ./karina
+      env:
+        SUITE: ${{ matrix.suite }}
+        KUBERNETES_VERSION: ${{matrix.k8s}}
+        BUILD: test (${{matrix.k8s}}, ${{ matrix.suite }})
+        ADDITIONAL_CONFIG: -c test/hosted-tests.yaml
+      run: ./test/test.sh
+    - name: Upload test results
+      uses: actions/upload-artifact@v2
+      with:
+        if-no-files-found: ignore
+        name: test-results-${{matrix.k8s}}-${{matrix.suite}}
+        path: test-results/
+    - name: Upload snapshots
+      uses: actions/upload-artifact@v2
+      with:
+        if-no-files-found: ignore
+        name: snapshot-${{matrix.k8s}}-${{matrix.suite}}
+        path: artifacts/snapshot.zip
