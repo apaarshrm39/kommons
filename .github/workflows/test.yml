@@ -31,7 +31,7 @@ jobs:
     needs:
       - build
     env:
-      FILE_CHANGES_TO_CORE_ARTIFACTS: ${{ needs.gates.outputs.fileChangesToCoreArtifacts == 'true' }}
+      FILE_CHANGES_TO_CORE_ARTIFACTS: true
     strategy:
       fail-fast: false
       matrix:
