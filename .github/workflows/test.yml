@@ -54,11 +54,3 @@ jobs:
         if-no-files-found: ignore
         name: snapshot-${{matrix.k8s}}-${{matrix.suite}}
         path: artifacts/snapshot.zip
-    - name: Generate Kind logs
-      run: .bin/kind export logs --name=kind-${{matrix.suite}}-${{matrix.k8s}} artifacts/kind-logs
-    - name: Upload Kind logs
-      uses: actions/upload-artifact@v2
-      with:
-        if-no-files-found: ignore
-        name: kind-logs-${{matrix.k8s}}-${{matrix.suite}}
-        path: artifacts/kind-logs
