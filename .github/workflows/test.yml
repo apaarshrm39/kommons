@@ -26,5 +26,5 @@ jobs:
         cat go.mod
         go mod tidy
       name: replace Module
-    - name: cd karina  && Test Make Linux
-      run: make linux
+    - name: Test Make Linux
+      run: cd karina && make linux
