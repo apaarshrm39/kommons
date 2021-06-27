@@ -17,7 +17,7 @@ jobs:
     - run: go version
     - run: |
         module=$(cat go.mod | grep github.com/flanksource/kommons | awk '{print $2}')
-        go mod edit -replace github.com/flanksource/kommons@$module=${{GITHUB_WORKSPACE}}
+        go mod edit -replace github.com/flanksource/kommons@$module=$GITHUB_WORKSPACE
         cat go.mod
         go mod tidy
       name: replace Module
