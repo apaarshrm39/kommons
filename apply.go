@@ -27,7 +27,7 @@ var (
 
 type ApplyHook func(namespace string, obj unstructured.Unstructured)
 
-#func (c *Client) copyImmutable(from, to *unstructured.Unstructured) {
+func (c *Client) copyImmutable(from, to *unstructured.Unstructured) {
 	if from == nil {
 		return
 	}
