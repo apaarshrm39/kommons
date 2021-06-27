@@ -7,8 +7,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-    container:
-      image: flanksource/build-tools:v0.13.6
+    env:
+      FILE_CHANGES_TO_CORE_ARTIFACTS: true
     strategy:
       fail-fast: false
       matrix:
@@ -21,6 +21,10 @@ jobs:
       with:
       #Using Main branch of Karina Repository
        repository: flanksource/karina
+    - uses: actions/setup-go@v2
+      with:
+       go-version: '1.16.5' # The Go version to download (if necessary) and use.
+    - run: go version
     - run: |
         module=$(cat go.mod | grep github.com/flanksource/kommons | awk '{print $2}')
         go mod edit -replace github.com/flanksource/kommons@$module=github.com/${{ github.repository }}@${{ github.head_ref }}  
@@ -29,10 +33,10 @@ jobs:
       name: replace Module
     - name: Test Make Linux
       run: make linux
+  
     - name: Run e2e testing script
       id: e2e
       env:
-        GIT_API_KEY: ${{ secrets.GITHUB_TOKEN }}
         SUITE: ${{ matrix.suite }}
         KUBERNETES_VERSION: ${{matrix.k8s}}
         BUILD: test (${{matrix.k8s}}, ${{ matrix.suite }})
@@ -50,11 +54,3 @@ jobs:
         if-no-files-found: ignore
         name: snapshot-${{matrix.k8s}}-${{matrix.suite}}
         path: artifacts/snapshot.zip
-    - name: Generate Kind logs
-      run: .bin/kind export logs --name=kind-${{matrix.suite}}-${{matrix.k8s}} artifacts/kind-logs
-    - name: Upload Kind logs
-      uses: actions/upload-artifact@v2
-      with:
-        if-no-files-found: ignore
-        name: kind-logs-${{matrix.k8s}}-${{matrix.suite}}
-        path: artifacts/kind-logs
