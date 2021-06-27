@@ -51,7 +51,6 @@ jobs:
       - name: Run e2e testing script
         id: e2e
         env:
-          GIT_API_KEY: ${{ secrets.GITHUB_TOKEN }}
           SUITE: ${{ matrix.suite }}
           KUBERNETES_VERSION: ${{matrix.k8s}}
           BUILD: test (${{matrix.k8s}}, ${{ matrix.suite }})
